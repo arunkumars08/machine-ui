@@ -179,12 +179,7 @@ export class DrawingBoardComponent implements AfterViewInit {
         }
         // draw tha pipe-like path
         // 1. move a bit down, 2. arch,  3. move a bit to the right, 4.arch, 5. move down to the end 
-        path.setAttribute("d",  "M"  + startX + " " + startY +
-                        " V" + (startY + delta) +
-                        " A" + delta + " " +  delta + " 0 0 " + arc1 + " " + (startX + delta*this.signum(deltaX)) + " " + (startY + 2*delta) +
-                        " H" + (endX - delta*this.signum(deltaX)) + 
-                        " A" + delta + " " +  delta + " 0 0 " + arc2 + " " + endX + " " + (startY + 3*delta) +
-                        " V" + endY );
+        path.setAttribute("d",  "M 17 20 l 15 0");
     }
 
     connectElements(svg, path, startElem, endElem) {
