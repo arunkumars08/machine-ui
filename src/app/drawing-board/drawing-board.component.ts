@@ -12,6 +12,7 @@ export class DrawingBoardComponent implements AfterViewInit {
     private context: CanvasRenderingContext2D;
 
     private positionMap: any = {};
+    private currentIden = 2;
 
     private svg: any;
 
@@ -46,7 +47,7 @@ export class DrawingBoardComponent implements AfterViewInit {
                         options: {
                             stroke: '#000'
                         },
-                        name: 'sq',
+                        name: 'sq-' + this.currentIden ++,
                         type: 'element',
                         shape: 'square'
                     };
@@ -114,7 +115,7 @@ export class DrawingBoardComponent implements AfterViewInit {
             .attr('class', 'rectangle')
             .attr('width', width)
             .attr('height', height)
-            .attr('id', 'arrow')
+            .attr('id', config.name)
             .attr('fill', '#fff')
             .attr('stroke', config.options.stroke)
             .on('click', () => {
@@ -124,6 +125,8 @@ export class DrawingBoardComponent implements AfterViewInit {
             })
             .on('dblclick', function () {
                 event.preventDefault();
+                let some = g.select('text');
+                console.log(some);
                 g   .append('text')
                     .attr('x', d3.event.x)
                     .attr('y', height / 2)
@@ -146,7 +149,77 @@ export class DrawingBoardComponent implements AfterViewInit {
             );
     }
 
+    signum(x) {
+        return (x < 0) ? -1 : 1;
+    }
+    absolute(x) {
+        return (x < 0) ? -x : x;
+    }
+
+    drawPath(svg, path, startX, startY, endX, endY) {
+        // get the path's stroke width (if one wanted to be  really precize, one could use half the stroke size)
+        var stroke =  parseFloat(path.getAttribute("stroke-width"));
+        // check if the svg is big enough to draw the path, if not, set heigh/width
+        if (svg.getAttribute("height") <  endY)                 svg.getAttribute("height", endY);
+        if (svg.getAttribute("width" ) < (startX + stroke) )    svg.getAttribute("width", (startX + stroke));
+        if (svg.getAttribute("width" ) < (endX   + stroke) )    svg.getAttribute("width", (endX   + stroke));
+        
+        var deltaX = (endX - startX) * 0.15;
+        var deltaY = (endY - startY) * 0.15;
+        // for further calculations which ever is the shortest distance
+        var delta  =  deltaY < this.absolute(deltaX) ? deltaY : this.absolute(deltaX);
+
+        // set sweep-flag (counter/clock-wise)
+        // if start element is closer to the left edge,
+        // draw the first arc counter-clockwise, and the second one clock-wise
+        var arc1 = 0; var arc2 = 1;
+        if (startX > endX) {
+            arc1 = 1;
+            arc2 = 0;
+        }
+        // draw tha pipe-like path
+        // 1. move a bit down, 2. arch,  3. move a bit to the right, 4.arch, 5. move down to the end 
+        path.setAttribute("d",  "M"  + startX + " " + startY +
+                        " V" + (startY + delta) +
+                        " A" + delta + " " +  delta + " 0 0 " + arc1 + " " + (startX + delta*this.signum(deltaX)) + " " + (startY + 2*delta) +
+                        " H" + (endX - delta*this.signum(deltaX)) + 
+                        " A" + delta + " " +  delta + " 0 0 " + arc2 + " " + endX + " " + (startY + 3*delta) +
+                        " V" + endY );
+    }
+
+    connectElements(svg, path, startElem, endElem) {
+        var svgContainer: any= document.getElementById('svg');
+
+        // if first element is lower than the second, swap!
+        if(startElem.getBBox().y > endElem.getBBox().y){
+            var temp = startElem;
+            startElem = endElem;
+            endElem = temp;
+        }
+
+        // get (top, left) corner coordinates of the svg container   
+        var svgTop  = svgContainer.getBBox().y;
+        var svgLeft = svgContainer.getBBox().x;
+
+        // get (top, left) coordinates for the two elements
+        var startCoord = startElem.getBBox();
+        var endCoord   = endElem.getBBox();
+
+        // calculate path's start (x,y)  coords
+        // we want the x coordinate to visually result in the element's mid point
+        var startX = startCoord.x + 0.5*Number(startElem.getAttribute('width')) - svgLeft;    // x = left offset + 0.5*width - svg's left offset
+        var startY = startCoord.y  + Number(startElem.getAttribute('height')) - svgTop;        // y = top offset + height - svg's top offset
+
+            // calculate path's end (x,y) coords
+        var endX = endCoord.x + 0.5*Number(endElem.getAttribute('width')) - svgLeft;
+        var endY = endCoord.y  - svgTop;
+
+        // call function for drawing the path
+        this.drawPath(svg, path, startX, startY, endX, endY);
+    }
+
     private arrow(x1: number, y1: number, x2: number, y2: number, direction?: string, config?: any): void {
+        if (config.type === 'indicator') {
         this.svg.append('line')
              .attr('x1', x1)
              .attr('y1', y1)
@@ -176,6 +249,16 @@ export class DrawingBoardComponent implements AfterViewInit {
                     this.setAttribute('y2', currentY + (y2 - y1));
                 })
             );
+        } else {
+
+        this.svg.append('path')
+                .attr('id', 'p1')
+                .attr("stroke", "#ccc")
+                .attr("stroke-width", 2)
+                .attr("fill", "none");
+
+        this.connectElements(document.getElementById('svg'), document.getElementById('p1'), document.getElementById('sq-2'), document.getElementById('sq-3'));
+        }
     }
 
     drawShape(config: any): void {
