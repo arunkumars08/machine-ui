@@ -12,7 +12,7 @@ export class DependencyCheckService {
     constructor(private http: Http) {}
 
     public checkPackages(inputs: Array<string>): Observable<any> {
-        let url: string = 'https://gist.githubusercontent.com/arunkumars08/cc742fd763407c5e2680d7e5564e0cf0/raw/69adbba5336dc45e5947accabfda43fb408b8ca5/dependency-check.service.mock.json';
+        let url: string = 'https://gist.githubusercontent.com/ravsa/72695271a0bc23eda07d3dab70d011ba/raw/72be94118c3ee3dd5ac2d2ed367c5bbe050236ca/response.json';
         let body: any = {};
         // Change to POST once integrated with service
         return this    .http

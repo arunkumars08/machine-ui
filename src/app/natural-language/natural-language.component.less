@@ -1,16 +1,80 @@
+@patternfly-blue: #39a5dc;
+@white: #fff;
 .natural-language {
     position: relative;
 
     .ma-textarea {
         width: 100%;
-        min-height: 100px;
+        min-height: 50px;
         border: 1px solid #ccc;
     }
 }
 
-.dependencies-section {
-    .dependency {
-        border: 1px solid #ccc;
-        padding: 10px;
+.secure {
+    color: #60b57e;
+  }
+  
+.insecure {
+  color: #ff1f1c;
+}
+
+.add-more-section {
+    margin-top: 20px;
+}
+
+.submit {
+    float: right;
+}
+
+
+.suggestions {
+    background: rgb(191, 236, 238);
+    width: 150px;
+    position: absolute;
+
+    .close-container {
+        right: -21px;
+        position: absolute;
+        display: inline-block;
+        padding: 5px 6px;
+        background: rgb(255, 1, 1);
+        cursor: pointer;
+
+        &:hover {
+            background: #000;
+            color: @white;
+        }
     }
+
+    & > div {
+        padding: 10px;
+        position: relative;
+        &:hover, &.clicked-suggestion {
+            background: @patternfly-blue;
+            color: @white;
+            cursor: pointer;
+        }
+        .package {
+            float: left;
+            font-weight: bold;
+        }
+        .version {
+            float: right;
+            right: 10px;
+            position: relative;
+        }
+        &:after {
+            content: '';
+            display: block;
+            float: none;
+            clear: both;
+        }
+    }
+}
+
+.dependencies-section {
+.dependency {
+    border: 1px solid #ccc;
+    padding: 10px;
+}
 }

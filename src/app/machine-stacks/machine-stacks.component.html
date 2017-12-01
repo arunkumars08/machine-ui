@@ -1,3 +1,4 @@
+<div class='machine-stacks'>
 <drawing-board (link)="handleLinks($event)" (dblclick)="handleDblClick($event)"></drawing-board>
 
 <modal #naturalLanguageModal title="Create your own stack" modalClass="modal-lg modal-fullscreen modal-width-class" (onClose)="handleModalClose();">
@@ -11,3 +12,4 @@
 
 <button (click)="handleSubmitFChart()" *ngIf="showFinalButton">Submit FlowChart</button>
 <p *ngIf="doShowMessage" [innerHTML]="message"></p>
+</div>

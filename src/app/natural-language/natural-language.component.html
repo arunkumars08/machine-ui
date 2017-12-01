@@ -1,5 +1,13 @@
 <div class="natural-language">
-    <textarea class="ma-textarea" (keypress)="handleUserInputKeyPress($event)" [(ngModel)]="userInput"></textarea>
+    <textarea class="ma-textarea" (keydown)="handleUserInputKeyPress($event)" [(ngModel)]="userInput"></textarea>
+    <section>
+        <div #sug (click)="handleSuggestionClick(suggestion, sug)" *ngIf="suggestions && suggestions.length > 0" class="suggestions">
+            <span (click)="suggestions = [];"> </span>
+            <div *ngFor="let suggestion of suggestions | slice:0:10; let i=index">
+                <span class="package">{{suggestion}}</span>
+            </div>
+        </div>
+    </section>
     <button class="btn btn-primary ma-button" (click)="processNaturalLanguage()" [disabled]="!userInput">Submit</button>
 </div>
 
@@ -9,35 +17,66 @@
         <thead>
             <tr>
                 <th>Package Name</th>
-                <th>Latest Version</th>
+                <th>Recommended Version</th>
                 <th>Security Issues</th>
-                <th>OSIO Usage</th>
+                <th>Dependent Repositories</th>
                 <th>Licenses</th>
-                <th>Categories</th>
+                <th>Tags</th>
                 <th></th>
             </tr>
         </thead>
         <tbody>
             <tr *ngFor="let dependency of dependencies">
                 <td>{{dependency.name}}</td>
-                <td>{{dependency.insights && dependency.insights.latest_version}}</td>
-                <td>{{dependency.insights && dependency.insights.security && dependency.insights.security.length > 0}}</td>
-                <td>{{dependency.insights && dependency.insights.osio_user_count && dependency.insights.osio_user_count}}</td>
-                <td>{{dependency.insights && dependency.insights.licenses && dependency.insights.licenses.length > 0 && dependency.insights.licenses.join(', ')}}</td>
-                <td>{{dependency.insights && dependency.insights.topic_list && dependency.insights.topic_list.length > 0 && dependency.insights.topic_list.join(', ')}}</td>
+                <td>{{dependency && dependency.latest_version}}</td>
+                <td>
+                    <i title="" [ngClass]="{'fa': true, 'insecure fa-ban': dependency.security.length > 0, 'secure fa-check-circle-o': dependency.security.length === 0}" aria-hidden="true"></i>
+                </td>
+                <td>
+                    <span style="display: block;" *ngFor="let u of dependency.github.used_by.slice(0, 2)">{{u.name}}</span>
+                </td>
+                <td>{{dependency && dependency.licenses && dependency.licenses.length > 0 && dependency.licenses.join(', ')}}</td>
+                <td [innerHTML]="getTags(dependency)"></td>
                 <td><input type="checkbox" value="" (change)="dependency.checked = !dependency.checked" [checked]="dependency.checked" /></td>
             </tr>
         </tbody>
     </table>
-    <button (click)="counter.push(1); addMore = true" *ngIf="dependencies && dependencies.length > 0" class="add-more btn btn-primary">Add your known package</button>
-    <div *ngIf="addMore" class="add-more-section col-xs-12">
-        <input type="text" value="" [(ngModel)]="inputs[i]" *ngFor="let in of counter; let i = index;" />
-        <button class="btn btn-primary" (click)="handleAddMore()">Add</button>
-    </div>
-    (or) <button (click)="addTag = true" *ngIf="dependencies && dependencies.length > 0" class="add-more btn btn-primary">Search by tag</button>
-    <div *ngIf="addTag" class="add-more-section col-xs-12">
-        <input type="text" value="" [(ngModel)]="tags" />
-         <button class="btn btn-primary" (click)="handleAddTag()">Add</button>
-    </div>
-    (or) <button (click)="handleSubmit()" *ngIf="dependencies && dependencies.length > 0" class="add-more btn btn-primary">Submit to generate your stack</button>
+</div>
+<div *ngIf="newDepen && newDepen.length > 0" class="dependencies-section">
+<h3>Your own dependencies</h3>
+<table *ngIf="newDepen && newDepen.length > 0" class="table table-striped table-bordered">
+        <thead>
+                <tr>
+                    <th>Package Name</th>
+                    <th>Recommended Version</th>
+                    <th>Security Issues</th>
+                    <th>Dependent Repositories</th>
+                    <th>Licenses</th>
+                    <th>Tags</th>
+                    <th></th>
+                </tr>
+            </thead>
+    <tbody>
+        <tr *ngFor="let dependency of newDepen">
+            <td>{{dependency.name}}</td>
+            <td>{{dependency && dependency.latest_version}}</td>
+            <td>
+                <i title="" [ngClass]="{'fa': true, 'insecure fa-ban': dependency && dependency.security && dependency.security.length > 0, 'secure fa-check-circle-o': dependency && dependency.security && dependency.security.length === 0}" aria-hidden="true"></i>
+            </td>
+            <td>
+                <span style="display: block;" *ngFor="let u of dependency.github.used_by.slice(0, 2)">{{u.name}}</span>
+            </td>
+            <td>{{dependency && dependency.licenses && dependency.licenses.length > 0 && dependency.licenses.join(', ')}}</td>
+            <td [innerHTML]="getTags(dependency)"></td>
+            <td><input type="checkbox" value="" (change)="dependency.checked = !dependency.checked" [checked]="dependency.checked" /></td>
+        </tr>
+    </tbody>
+</table>
+</div>
+
+<button (click)="addTag = true" *ngIf="dependencies && dependencies.length > 0" class="add-more btn btn-primary">Add your known package</button>
+<button (click)="handleSubmit()" *ngIf="dependencies && dependencies.length > 0" class="submit add-more btn btn-primary">Submit to generate your stack</button> 
+<div *ngIf="addTag" class="add-more-section">
+    <input type="text" value="" [(ngModel)]="selected" [typeahead]="masterTagsList" />
+     <button class="btn btn-primary" (click)="handleAddTag()">Add</button>
 </div>

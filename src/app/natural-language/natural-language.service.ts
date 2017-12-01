@@ -1,15 +1,18 @@
 import { Injectable, Inject } from '@angular/core';
-import { Http, Response } from '@angular/http';
+import { Http, Headers, Response, RequestOptions } from '@angular/http';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/catch';
 import 'rxjs/add/operator/map';
+import { Observer } from 'rxjs/Observer';
 
 @Injectable()
 export class NaturalLanguageService {
+    private headers: Headers = new Headers({'Content-Type': 'application/json'});
+
     constructor(private http: Http) {}
 
     public getPackages(userInput: string): Observable<any> {
-        let url: string = 'https://gist.githubusercontent.com/arunkumars08/cbabd0a40f177cb359c7315d428ebe01/raw/dd147bb24a1802368755fbe0f42312cdfd175c21/natural-language.mock.json';
+        let url: string = 'https://gist.githubusercontent.com/ravsa/72695271a0bc23eda07d3dab70d011ba/raw/72be94118c3ee3dd5ac2d2ed367c5bbe050236ca/response.json';
         let body: any = {};
         // Change to POST once integrated with service
         return this    .http
@@ -17,6 +20,17 @@ export class NaturalLanguageService {
                 .map(this.extractData)
                 .catch(this.handleError);
     }
+
+    public getMasterTags(): Observable<any> {
+        let url: string = 'API_URL';
+        this.headers.set('Authorization', 'Bearer ' + "ACCESS_TOKEN");
+        let options = new RequestOptions({ headers: this.headers });
+        return this .http
+                    .get(url, options)
+                    .map(this.extractData)
+                    .catch(this.handleError);
+    }
+
 
     private extractData(res: Response) {
         let body = res.json() || {};
