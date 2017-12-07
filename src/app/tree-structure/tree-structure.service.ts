@@ -4,39 +4,25 @@ import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/catch';
 import 'rxjs/add/operator/map';
 import { Observer } from 'rxjs/Observer';
+import {TreeNode} from 'primeng/components/common/treenode';
 
 @Injectable()
-export class NaturalLanguageService {
+export class TreeService {
   private headers: Headers = new Headers({'Content-Type': 'application/json'});
 
   constructor(private http: Http) {}
-
-  public getPackages(userInput: string): Observable<any> {
-    let url: string = 'https://gist.githubusercontent.com/ravsa/72695271a0bc23eda07d3dab70d011ba/raw/72be94118c3ee3dd5ac2d2ed367c5bbe050236ca/response.json';
-    let body: any = {};
-    // Change to POST once integrated with service
-    return this    .http
-    .get(url, body)
-    .map(this.extractData)
-    .catch(this.handleError);
-  }
-
-  public getMasterTags(): Observable<any> {
-    let url: string = 'API_URL';
-    this.headers.set('Authorization', 'Bearer ' + "ACCESS_TOKEN");
-    let options = new RequestOptions({ headers: this.headers });
-    return this .http
-    .get(url, options)
-    .map(this.extractData)
-    .catch(this.handleError);
-  }
-
 
   private extractData(res: Response) {
     let body = res.json() || {};
     body['statusCode'] = res.status;
     body['statusText'] = res.statusText;
     return body;
+  }
+
+  public getFileSystem() {
+    return this.http.get('https://gist.githubusercontent.com/ravsa/16a48a68a44741c7f20dcbe7b4996b81/raw/95cc5e90308787a7cd7e0beff8e20b0a68574f5a/temp.json', {})
+      .toPromise()
+      .then(res => <TreeNode[]> res.json().data);
   }
 
   private handleError(error: Response | any) {

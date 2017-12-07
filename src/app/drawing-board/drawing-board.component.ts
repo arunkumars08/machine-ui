@@ -12,10 +12,12 @@ export class DrawingBoardComponent implements AfterViewInit {
     private canvas: HTMLCanvasElement;
     private context: CanvasRenderingContext2D;
 
-    private dblclick = new EventEmitter();
+    @Output() dblclick = new EventEmitter<string>();
+    @Output() link = new EventEmitter<any>();
 
     private positionMap: any = {};
     private objectMap: any = {};
+    private links: any = {};
 
     private svg: any;
     private board: any;
@@ -41,32 +43,35 @@ export class DrawingBoardComponent implements AfterViewInit {
 
         // this.board = new Raphael(this.boardContainer.nativeElement, 1000, 500);
         this.graph = new joint.dia.Graph;
+        const arrowheadShape = 'M 10 0 L 0 5 L 10 10 z';
         this.paper = new joint.dia.Paper({
             el: this.boardContainer.nativeElement,
             width: 500,
             height: 500,
             gridSize: 1,
-            model: this.graph
+            model: this.graph,
+            defaultLink: new joint.shapes.devs.Link({
+                attrs: {
+                    '.marker-target': {
+                        d: arrowheadShape
+                    }
+                }
+            })
         });
 
         /** Trial */
 
-        this.graph.on('change:source change:target', function(link) {
+        this.graph.on('change:source change:target', (link) => {
             const sourcePort = link.get('source').port;
-            var sourceId = link.get('source').id;
-            var targetPort = link.get('target').port;
-            var targetId = link.get('target').id;
-
-            var m = [
-                'The port <b>' + sourcePort,
-                '</b> of element with ID <b>' + sourceId,
-                '</b> is connected to port <b>' + targetPort,
-                '</b> of elemnt with ID <b>' + targetId + '</b>'
-            ].join('');
-
-            console.log(link.get('source'));
-            
-            console.log(m);
+            const sourceId = link.get('source').id;
+            const targetPort = link.get('target').port;
+            const targetId = link.get('target').id;
+            if (sourceId && targetId) {
+                // event.stopPropagation();
+                console.log(sourceId, targetId);
+                this.links[sourceId] = targetId;
+                this.link.emit(this.links);
+            }
         });
 
         this.paper.on('cell:pointerdown', (event) => {
@@ -175,8 +180,7 @@ export class DrawingBoardComponent implements AfterViewInit {
                 const rect = new joint.shapes.basic.Rect({
                     position: { x: 10, y: 10 },
                     size: { width: 30, height: 30 },
-                    attrs: { rect: { fill: '#fff', stroke: '#000' } },
-                    
+                    attrs: { rect: { fill: '#fff', stroke: '#000' } }
                 });
                 this.objectMap[rect.id] = {
                     type: config.type,
@@ -196,14 +200,16 @@ export class DrawingBoardComponent implements AfterViewInit {
                         'in': {
                             attrs: {
                                 '.port-body': {
-                                    fill: '#000'
+                                    fill: '#5f56f1',
+                                    r: 5,
                                 }
                             }
                         },
                         'out': {
                             attrs: {
                                 '.port-body': {
-                                    fill: '#000'
+                                    fill: '#5f56f1',
+                                    r: 5,
                                 }
                             }
                         }
@@ -213,7 +219,14 @@ export class DrawingBoardComponent implements AfterViewInit {
                     rect: { fill: '#fff' }
                 }
             });
+            let notification = new joint.shapes.basic.Rect({
+                position: { x: x1 + width - 10, y: y1 },
+                size: { width: 20, height: 20 },
+                attrs: { text: { text: '1', fill: '#fff' }, rect: { fill: 'GREEN' } }
+            });
+            notification = null;
             this.graph.addCell(square);
+            // square.embed(notification);
             this.objectMap[square.id] = {
                 type: config.type,
                 name: config.name,
