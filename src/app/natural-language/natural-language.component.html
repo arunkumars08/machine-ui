@@ -1,5 +1,6 @@
 <div class="natural-language">
-    <textarea class="ma-textarea" [(ngModel)]="userInput"></textarea>
+    <h3>Describe your intent here</h3>
+    <textarea placeholder="Example: I want to create a @spring boot application" class="ma-textarea" [(ngModel)]="userInput"></textarea>
     <button class="btn btn-primary ma-button" (click)="processNaturalLanguage()" [disabled]="!userInput">Submit</button>
 </div>
 

@@ -1,10 +1,12 @@
 <drawing-board (dblclick)="handleDblClick($event)"></drawing-board>
-
-<modal #naturalLanguageModal title="Create your own stack" modalClass="modal-lg modal-fullscreen modal-width-class" (onClose)="handleModalClose();">
+<div *ngIf="openModal" #previewArea class="preview-area col-xs-12">
+    <natural-language></natural-language>
+</div>
+<!--<modal #naturalLanguageModal title="Create your own stack" modalClass="modal-lg modal-fullscreen modal-width-class" (onClose)="handleModalClose();">
     <modal-header>
         {{modalHeader}}
     </modal-header>
     <modal-content>
         <natural-language></natural-language>
     </modal-content>
-</modal>
+</modal>-->
