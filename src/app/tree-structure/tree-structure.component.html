@@ -1,5 +1,5 @@
 <p-treeTable [value]="files">
-  <p-column field="key" header="Key"> </p-column>
+  <p-column field="key" header="Key" width="10"> </p-column>
   <p-column field="value" header="Value">
     <ng-template let-node="rowData" pTemplate="body">
       <label  contenteditable="true">{{node.data.value}}</label>

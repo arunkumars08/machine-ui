@@ -20,7 +20,7 @@ export class TreeService {
   }
 
   public getFileSystem() {
-    return this.http.get('https://gist.githubusercontent.com/ravsa/16a48a68a44741c7f20dcbe7b4996b81/raw/95cc5e90308787a7cd7e0beff8e20b0a68574f5a/temp.json', {})
+    return this.http.get('https://gist.githubusercontent.com/ravsa/16a48a68a44741c7f20dcbe7b4996b81/raw/b61db5b8f2d67aa7b66ae44206e1b157b3f034bb/temp.json', {})
       .toPromise()
       .then(res => <TreeNode[]> res.json().data);
   }

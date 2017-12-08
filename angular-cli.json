@@ -21,6 +21,8 @@
       "styles": [
           "../node_modules/patternfly/dist/css/patternfly.min.css",
           "../node_modules/jointjs/css/layout.css",
+          "../node_modules/primeng/resources/themes/cruze/theme.css",
+          "../node_modules/primeng/resources/primeng.min.css",
           { "input": "../node_modules/primeng/resources/themes/omega/theme.css", "output": "omega.css" },
           { "input": "../node_modules/primeng/resources/primeng.min.css", "output": "primeng.min.css" }
 

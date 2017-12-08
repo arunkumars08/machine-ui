@@ -121,27 +121,23 @@ export class NaturalLanguageComponent implements OnInit {
                 this._flag = false;
                 this.search_key = '';
                 this.suggestions = [];
-            }
-            else if (key.trim() !== '@') {
+            }else if (key.trim() !== '@') {
                 this._flag = true;
                 if (key === 'Backspace') {
                     if (this.search_key !== '') {
                         this.search_key = this.search_key.slice(0, -1);
-                    }
-                    else {
+                    }else {
                         this._flag = false;
                         this.suggestions = [];
                     }
-                }
-                else {
+                } else {
                     this.search_key += key;
                 }
                 if (this.search_key){
                 this.suggestions = this.masterTagsList.filter((tag) => {
-                    return tag.indexOf(this.search_key) !== -1
+                    return tag.indexOf(this.search_key) !== -1;
                 })}
-            }
-            else {
+            }else {
                 this._flag = true;
             }
             console.log(this.search_key);

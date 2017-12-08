@@ -1,5 +1,5 @@
 <div class="natural-language">
-    <textarea class="ma-textarea" (keydown)="handleUserInputKeyPress($event)" [(ngModel)]="userInput"></textarea>
+    <textarea class="ma-textarea" (keydown)="handleUserInputKeyPress($event)" [(ngModel)]="userInput" placeholder="Describe your intent here."></textarea>
     <section>
         <div #sug (click)="handleSuggestionClick(suggestion, sug)" *ngIf="suggestions && suggestions.length > 0" class="suggestions">
             <span (click)="suggestions = [];"> </span>
@@ -16,28 +16,28 @@
     <table class="table table-fix table-striped table-bordered">
         <thead>
             <tr>
+                <th></th>
                 <th>Package Name</th>
                 <th>Recommended Version</th>
                 <th>Security Issues</th>
                 <th>Dependent Repositories</th>
                 <th>Licenses</th>
                 <th>Tags</th>
-                <th></th>
             </tr>
         </thead>
         <tbody>
             <tr *ngFor="let dependency of dependencies">
-                <td>{{dependency.name}}</td>
-                <td>{{dependency && dependency.latest_version}}</td>
+                <td class="small-column"><input type="checkbox" value="" (change)="dependency.checked = !dependency.checked" [checked]="dependency.checked" /></td>
+                <td class="dependency-package">{{dependency.name}}</td>
+                <td class="dependency-package">{{dependency && dependency.latest_version}}</td>
                 <td>
-                    <i title="" [ngClass]="{'fa': true, 'insecure fa-ban': dependency.security.length > 0, 'secure fa-check-circle-o': dependency.security.length === 0}" aria-hidden="true"></i>
+                    <i title="" class="small-column" [ngClass]="{'fa': true, 'insecure fa-ban': dependency.security.length > 0, 'secure fa-check-circle-o': dependency.security.length === 0}" aria-hidden="true"></i>
                 </td>
-                <td>
+                <td class="dependency-package">
                     <span style="display: block;" *ngFor="let u of dependency.github.used_by.slice(0, 2)">{{u.name}}</span>
                 </td>
-                <td>{{dependency && dependency.licenses && dependency.licenses.length > 0 && dependency.licenses.join(', ')}}</td>
+                <td class="dependency-package">{{dependency && dependency.licenses && dependency.licenses.length > 0 && dependency.licenses.join(', ')}}</td>
                 <td [innerHTML]="getTags(dependency)"></td>
-                <td><input type="checkbox" value="" (change)="dependency.checked = !dependency.checked" [checked]="dependency.checked" /></td>
             </tr>
         </tbody>
     </table>
@@ -47,28 +47,28 @@
 <table *ngIf="newDepen && newDepen.length > 0" class="table table-fix table-striped table-bordered">
         <thead>
                 <tr>
+                    <th></th>
                     <th>Package Name</th>
                     <th>Recommended Version</th>
                     <th>Security Issues</th>
                     <th>Dependent Repositories</th>
                     <th>Licenses</th>
                     <th>Tags</th>
-                    <th></th>
                 </tr>
             </thead>
     <tbody>
         <tr *ngFor="let dependency of newDepen">
-            <td>{{dependency.name}}</td>
-            <td>{{dependency && dependency.latest_version}}</td>
+            <td><input class="small-column" type="checkbox" value="" (change)="dependency.checked = !dependency.checked; dependencies.push(dependency); newDepen.splice(dependency, 1);" [checked]="dependency.checked" /></td>
+            <td class="dependency-package">{{dependency.name}}</td>
+            <td class="dependency-package">{{dependency && dependency.latest_version}}</td>
             <td>
-                <i title="" [ngClass]="{'fa': true, 'insecure fa-ban': dependency && dependency.security && dependency.security.length > 0, 'secure fa-check-circle-o': dependency && dependency.security && dependency.security.length === 0}" aria-hidden="true"></i>
+                <i title="" class="small-column" [ngClass]="{'fa': true, 'insecure fa-ban': dependency && dependency.security && dependency.security.length > 0, 'secure fa-check-circle-o': dependency && dependency.security && dependency.security.length === 0}" aria-hidden="true"></i>
             </td>
-            <td>
+            <td class="dependency-package">
                 <span style="display: block;" *ngFor="let u of dependency.github.used_by.slice(0, 2)">{{u.name}}</span>
             </td>
-            <td>{{dependency && dependency.licenses && dependency.licenses.length > 0 && dependency.licenses.join(', ')}}</td>
+            <td class="dependency-package">{{dependency && dependency.licenses && dependency.licenses.length > 0 && dependency.licenses.join(', ')}}</td>
             <td [innerHTML]="getTags(dependency)"></td>
-            <td><input type="checkbox" value="" (change)="dependency.checked = !dependency.checked; dependencies.push(dependency); newDepen.splice(dependency, 1);" [checked]="dependency.checked" /></td>
         </tr>
     </tbody>
 </table>

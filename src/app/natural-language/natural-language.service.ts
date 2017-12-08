@@ -12,7 +12,7 @@ export class NaturalLanguageService {
   constructor(private http: Http) {}
 
   public getPackages(userInput: string): Observable<any> {
-    let url: string = 'https://gist.githubusercontent.com/ravsa/72695271a0bc23eda07d3dab70d011ba/raw/72be94118c3ee3dd5ac2d2ed367c5bbe050236ca/response.json';
+    let url: string = 'https://gist.githubusercontent.com/ravsa/72695271a0bc23eda07d3dab70d011ba/raw/ed64af56c6fbddeb1b10f7d30debb172f5062bba/response.json';
     let body: any = {};
     // Change to POST once integrated with service
     return this    .http
