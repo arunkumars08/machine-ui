@@ -23,6 +23,7 @@ export class DrawingBoardComponent implements AfterViewInit {
     private board: any;
 
     private increment = 1;
+    private containers = 0;
 
     // @ViewChild('canvasElement') canvasEl: ElementRef;
     @ViewChild('boardContainer') boardContainer: ElementRef;
@@ -90,6 +91,7 @@ export class DrawingBoardComponent implements AfterViewInit {
                 if (config) {
                     if (config.type === 'element') {
                         config['modelId'] = event.model.id;
+                        config['service'] = event.model.attributes.attrs.text.text;
                         this.handleCallback('dblclick', config, config.name);
                     }
                 }
@@ -193,8 +195,8 @@ export class DrawingBoardComponent implements AfterViewInit {
             const square = new joint.shapes.devs.Model({
                 position: { x: x1, y: y1 },
                 size: { width: width, height: height },
-                inPorts: ['in'],
-                outPorts: ['out'],
+                inPorts: ['1'],
+                outPorts: ['2'],
                 ports: {
                     groups: {
                         'in': {
@@ -216,7 +218,8 @@ export class DrawingBoardComponent implements AfterViewInit {
                     }
                 },
                 attrs: {
-                    rect: { fill: '#fff' }
+                    rect: { fill: '#fff' },
+                    text: { text: 'Service' + ++ this.containers }
                 }
             });
             let notification = new joint.shapes.basic.Rect({

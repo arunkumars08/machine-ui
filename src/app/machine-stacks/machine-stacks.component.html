@@ -1,6 +1,15 @@
-<drawing-board (dblclick)="handleDblClick($event)"></drawing-board>
+<drawing-board (link)="handleLinks($event)" (dblclick)="handleDblClick($event)"></drawing-board>
+<button (click)="handleSubmitFChart()" *ngIf="showFinalButton">Submit FlowChart</button>
+<p *ngIf="doShowMessage" [innerHTML]="message"></p>
 <div *ngIf="openModal" #previewArea class="preview-area col-xs-12">
-    <natural-language (submit)="handleModalInputSubmit($event)"></natural-language>
+    <tabset *ngIf="openModal">
+            <tab heading="Intent" id="tab1">
+                <natural-language (submit)="handleModalInputSubmit($event)"></natural-language>
+            </tab>
+            <tab heading="Deployment Configuration" id="tab2">
+                <tree-table></tree-table>
+            </tab>
+    </tabset>
 </div>
 <!--<modal #naturalLanguageModal title="Create your own stack" modalClass="modal-lg modal-fullscreen modal-width-class" (onClose)="handleModalClose();">
     <modal-header>
@@ -10,3 +19,4 @@
         <natural-language></natural-language>
     </modal-content>
 </modal>-->
+

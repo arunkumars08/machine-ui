@@ -17,7 +17,7 @@ export class MachineStacksComponent {
     public doShowMessage = false;
     public message = '';
     public openNaturalLanguage = false;
-    @ViewChild('naturalLanguageModal') naturalLanguageModal: any;
+    // @ViewChild('naturalLanguageModal') naturalLanguageModal: any;
 
     public handleDblClick(event: any): void {
         if (!event.stopPropagation) {
@@ -25,7 +25,8 @@ export class MachineStacksComponent {
             console.log('Ev', event);
             this.currentElement = event;
             this.openNaturalLanguage = true;
-            this.naturalLanguageModal.open();
+            this.openModal = true;
+            // this.naturalLanguageModal.open();
             this.showFinalButton = true;
         }
     }
@@ -56,7 +57,8 @@ export class MachineStacksComponent {
     public handleModalClose(): void {
         console.log(this.containerMap);
         this.openNaturalLanguage = false;
-        this.naturalLanguageModal.close();
+        // this.naturalLanguageModal.close();
+        this.openModal = false;
     }
 
     public handleModalInputSubmit(event: any): void {

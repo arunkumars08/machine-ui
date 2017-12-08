@@ -17,17 +17,18 @@
     <table class="table table-fix table-striped table-bordered">
         <thead>
             <tr>
+                <th></th>
                 <th>Package Name</th>
                 <th>Recommended Version</th>
                 <th>Security Issues</th>
                 <th>Dependent Repositories</th>
                 <th>Licenses</th>
                 <th>Tags</th>
-                <th></th>
             </tr>
         </thead>
         <tbody>
             <tr *ngFor="let dependency of dependencies">
+                <td><input type="checkbox" value="" (change)="dependency.checked = !dependency.checked" [checked]="dependency.checked" /></td>
                 <td>{{dependency.name}}</td>
                 <td>{{dependency && dependency.latest_version}}</td>
                 <td>
@@ -38,7 +39,6 @@
                 </td>
                 <td>{{dependency && dependency.licenses && dependency.licenses.length > 0 && dependency.licenses.join(', ')}}</td>
                 <td [innerHTML]="getTags(dependency)"></td>
-                <td><input type="checkbox" value="" (change)="dependency.checked = !dependency.checked" [checked]="dependency.checked" /></td>
             </tr>
         </tbody>
     </table>
@@ -48,17 +48,18 @@
 <table *ngIf="newDepen && newDepen.length > 0" class="table table-fix table-striped table-bordered">
         <thead>
                 <tr>
+                    <th></th>
                     <th>Package Name</th>
                     <th>Recommended Version</th>
                     <th>Security Issues</th>
                     <th>Dependent Repositories</th>
                     <th>Licenses</th>
                     <th>Tags</th>
-                    <th></th>
                 </tr>
             </thead>
     <tbody>
         <tr *ngFor="let dependency of newDepen">
+            <td><input type="checkbox" value="" (change)="dependency.checked = !dependency.checked; dependencies.push(dependency); newDepen.splice(dependency, 1);" [checked]="dependency.checked" /></td>
             <td>{{dependency.name}}</td>
             <td>{{dependency && dependency.latest_version}}</td>
             <td>
@@ -69,7 +70,6 @@
             </td>
             <td>{{dependency && dependency.licenses && dependency.licenses.length > 0 && dependency.licenses.join(', ')}}</td>
             <td [innerHTML]="getTags(dependency)"></td>
-            <td><input type="checkbox" value="" (change)="dependency.checked = !dependency.checked; dependencies.push(dependency); newDepen.splice(dependency, 1);" [checked]="dependency.checked" /></td>
         </tr>
     </tbody>
 </table>
