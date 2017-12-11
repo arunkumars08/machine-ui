@@ -26,8 +26,12 @@ export class NaturalLanguageComponent implements OnInit, OnChanges {
     public newDepen: Array<any> = [];
 
     public serviceName = '';
+    public addPackages: Array<any> = [];
+    public conflictPackages:Array<any> = ["C"];
+    public neverUsedPackages:Array<any> = ["A"];
     
     @Output('submit') submit = new EventEmitter();
+    @Output('onContainerEntry') onContainerEntry = new EventEmitter();
 
     private masterTagsList: Array<string> = ['tag1', 'tag2', 'tag3'];
     private temp: Array<string> = [];
@@ -38,20 +42,46 @@ export class NaturalLanguageComponent implements OnInit, OnChanges {
 
     public tags: any = {};
     public addTag = false;
-
     constructor(private naturalLanguageService: NaturalLanguageService, 
                 private dependencyCheckService: DependencyCheckService) {}
 
     processNaturalLanguage(): void {
-        let naturalLanguage: Observable<any> = this.naturalLanguageService.getPackages(this.userInput);
-        naturalLanguage.subscribe((data) => {
-            console.log(data);
-            if (data) {
-                data['dependencies'].map((d) => d['checked'] = true);
-                this.dependencies = data['dependencies'];
+        const naturalLanguage: Observable<any> = this.naturalLanguageService.getPackages(this.userInput);
+        if (this.userInput) {
+            naturalLanguage.subscribe((data) => {
+                console.log(data);
+                if (data) {
+                    data['dependencies'].map((d) => d['checked'] = true);
+                    this.dependencies = data['dependencies'];
+                }
+            });
+            if (this.userInput.indexOf('aws') !== -1) {
+                this.onContainerEntry.emit('aws');
+            } else {
+                this.onContainerEntry.emit('openshift');
             }
-        });
+        }
     }
+
+    getDeploymentConfig(inputString: string): void{
+        // if (inputString.toLowerCase().indexOf('openshift') >= 0){
+        //     this.dependencyCheckService.filter('openshift');
+        // }else if (inputString.toLowerCase().indexOf('aws') >= 0){
+        //     this.dependencyCheckService.filter('aws');
+        // }
+
+    }
+    processAddPackages(): void {
+            const dep: Observable<any> = this.dependencyCheckService.checkPackages(this.tags);
+            dep.subscribe((data) => {
+                if (data) {
+                    if (data['dependencies'] && data['dependencies'].length > 0) {
+                        data['dependencies'].map((d) => d['checked'] = false);
+                        this.addPackages.push(...data['dependencies']);
+                    }
+                }
+            });
+        }
 
     getTags(dependency: any): string {
         if (dependency && dependency.topic_list){
@@ -108,21 +138,13 @@ export class NaturalLanguageComponent implements OnInit, OnChanges {
     }
 
     handleAddTag(): void {
-        if (this.tags) {
-            const dep: Observable<any> = this.dependencyCheckService.checkPackages(this.tags);
-            dep.subscribe((data) => {
-                if (data) {
-                    if (data['dependencies'] && data['dependencies'].length > 0) {
-                        data['dependencies'].map((d) => d['checked'] = false);
-                        this.newDepen.push(...data['dependencies'].slice(0, 1));
-                    }
-                }
-            });
-        }
+        this.newDepen.push(...this.addPackages.splice(0, 1));
     }
 
     handleUserInputKeyPress(event: KeyboardEvent): void {
         console.log(event);
+        if(this.userInput)
+            this.getDeploymentConfig(this.userInput);
         const key: string = event.key;
         if ((key && key.trim() === '@') || (key && this._flag)) {
             if (key === ' ') {
@@ -151,6 +173,16 @@ export class NaturalLanguageComponent implements OnInit, OnChanges {
             console.log(this.search_key);
         }
     }
+
+    public isCompatible(dependency: string): string{
+        if(this.conflictPackages.indexOf(dependency["name"]) >= 0){
+            return `#FAEBD7`;
+        } else if(this.neverUsedPackages.indexOf(dependency["name"]) >= 0){
+            return `#FFFFE0`;
+        }
+        return '';
+    }
+
     public handleSuggestionClick(suggestion: any, element: Element): void {
         console.log(suggestion);
         console.log(element);
@@ -167,6 +199,7 @@ export class NaturalLanguageComponent implements OnInit, OnChanges {
         // this.onTypeAhead.emit(output);
     }
     ngOnInit(): void {
+        this.processAddPackages();
         this.processMasterTags();
     }
 

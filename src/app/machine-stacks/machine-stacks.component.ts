@@ -16,10 +16,11 @@ export class MachineStacksComponent implements OnChanges {
     private linkMap: any = {};
     private currentElement: string = '';
 
+    public containerType = '';
+
     public doShowMessage = false;
     public message = '';
     public openNaturalLanguage = false;
-    // @ViewChild('naturalLanguageModal') naturalLanguageModal: any;
 
     public handleDblClick(event: any): void {
         if (!event.stopPropagation) {
@@ -47,6 +48,13 @@ export class MachineStacksComponent implements OnChanges {
             console.log(this.containerMap);
         }
         this.doShowMessage = true;
+    }
+
+    public handleContainerEntry(event: any): void {
+        if (!event.stopPropagation) {
+            console.log(event);
+            this.containerType = event;
+        }
     }
 
     public handleLinks(event: any): void {

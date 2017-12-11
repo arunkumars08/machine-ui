@@ -1,6 +1,7 @@
 import { Injectable, Inject } from '@angular/core';
 import { Http, Response } from '@angular/http';
 import { Observable } from 'rxjs/Observable';
+import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import 'rxjs/add/operator/catch';
 import 'rxjs/add/operator/map';
 
@@ -8,11 +9,17 @@ import 'rxjs/add/operator/map';
 export class DependencyCheckService {
 
     private static inputs: Array<string> = [];
+    private _listners = new BehaviorSubject<string> ("openshift");
+    message = this._listners.asObservable();
 
     constructor(private http: Http) {}
 
+    filter(message: string) {
+       this._listners.next(message);
+    }
+
     public checkPackages(inputs: Array<string>): Observable<any> {
-        let url: string = 'https://gist.githubusercontent.com/ravsa/72695271a0bc23eda07d3dab70d011ba/raw/72be94118c3ee3dd5ac2d2ed367c5bbe050236ca/response.json';
+        let url: string = 'https://gist.githubusercontent.com/ravsa/6d3dbfd38e5d2c8a715801d1eaae1008/raw/c7b85577c5a3adceda5ee8032d97526233e48892/add_packages.json';
         let body: any = {};
         // Change to POST once integrated with service
         return this    .http

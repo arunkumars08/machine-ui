@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { TypeaheadModule } from 'ngx-bootstrap';
+import { TypeaheadModule, TooltipModule } from 'ngx-bootstrap';
 
 
 
@@ -11,7 +11,8 @@ import { NaturalLanguageComponent } from './natural-language.component';
   imports: [
     CommonModule,
     FormsModule,
-    TypeaheadModule.forRoot()
+    TooltipModule.forRoot(),
+    TypeaheadModule.forRoot(),
   ],
   declarations: [
     NaturalLanguageComponent

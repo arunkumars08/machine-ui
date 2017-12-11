@@ -13,71 +13,73 @@
 </div>
 
 <div *ngIf="dependencies && dependencies.length > 0" class="dependencies-section">
-    <h3>Machine Generated Dependencies</h3>
-    <table class="table table-fix table-striped table-bordered">
-        <thead>
-            <tr>
-                <th class="small-column"></th>
-                <th>Package Name</th>
-                <th>Recommended Version</th>
-                <th>Security Issues</th>
-                <th>Dependent Repositories</th>
-                <th>Licenses</th>
-                <th>Tags</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr *ngFor="let dependency of dependencies">
-                <td><input type="checkbox" value="" (change)="dependency.checked = !dependency.checked" [checked]="dependency.checked" /></td>
-                <td class="dependency-package">{{dependency.name}}</td>
-                <td class="dependency-package">{{dependency && dependency.latest_version}}</td>
-                <td>
-                    <i title="" class="small-column" [ngClass]="{'fa': true, 'insecure fa-ban': dependency.security.length > 0, 'secure fa-check-circle-o': dependency.security.length === 0}" aria-hidden="true"></i>
-                </td>
-                <td class="dependency-package">
-                    <span style="display: block;" *ngFor="let u of dependency.github.used_by.slice(0, 2)">{{u.name}}</span>
-                </td>
-                <td class="dependency-package">{{dependency && dependency.licenses && dependency.licenses.length > 0 && dependency.licenses.join(', ')}}</td>
-                <td [innerHTML]="getTags(dependency)"></td>
-            </tr>
-        </tbody>
-    </table>
+  <h3>Machine Generated Dependencies</h3>
+  <table class="table table-fix table-striped table-bordered">
+    <thead>
+      <tr>
+        <th class="small-column"></th>
+        <th>Package Name</th>
+        <th>Recommended Version</th>
+        <th>Security Issues</th>
+        <th>Dependent Repositories</th>
+        <th>Licenses</th>
+        <th>Tags</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let dependency of dependencies">
+        <td class="small-column" style="background-image: url('/assests/red_warning.png')"><input type="checkbox" value="" (change)="dependency.checked = !dependency.checked" [checked]="dependency.checked" /></td>
+        <td class="dependency-package">{{dependency.name}}</td>
+        <td class="dependency-package">{{dependency && dependency.latest_version}}</td>
+        <td class="small-column">
+          <i title="" [ngClass]="{'fa': true, 'insecure fa-ban': dependency.security.length > 0, 'secure fa-check-circle-o': dependency.security.length === 0}" aria-hidden="true"></i>
+        </td>
+        <td class="dependency-package">
+          <span style="display: block;" *ngFor="let u of dependency.github.used_by.slice(0, 2)">{{u.name}}</span>
+        </td>
+        <td class="dependency-package">{{dependency && dependency.licenses && dependency.licenses.length > 0 && dependency.licenses.join(', ')}}</td>
+        <td [innerHTML]="getTags(dependency)"></td>
+      </tr>
+    </tbody>
+  </table>
 </div>
 <div *ngIf="newDepen && newDepen.length > 0" class="dependencies-section">
-<h3>Your own selected dependencies</h3>
-<table *ngIf="newDepen && newDepen.length > 0" class="table table-fix table-striped table-bordered">
-        <thead>
-                <tr>
-                    <th></th>
-                    <th>Package Name</th>
-                    <th>Recommended Version</th>
-                    <th>Security Issues</th>
-                    <th>Dependent Repositories</th>
-                    <th>Licenses</th>
-                    <th>Tags</th>
-                </tr>
-            </thead>
+  <h3>Your own selected dependencies</h3>
+  <table *ngIf="newDepen && newDepen.length > 0" class="table table-fix table-striped table-bordered">
+    <thead>
+      <tr>
+        <th class="small-column"></th>
+        <th>Package Name</th>
+        <th>Recommended Version</th>
+        <th>Security Issues</th>
+        <th>Dependent Repositories</th>
+        <th>Licenses</th>
+        <th>Tags</th>
+      </tr>
+    </thead>
     <tbody>
-        <tr *ngFor="let dependency of newDepen">
-            <td><input class="small-column" type="checkbox" value="" (change)="dependency.checked = !dependency.checked; dependencies.push(dependency); newDepen.splice(dependency, 1);" [checked]="dependency.checked" /></td>
-            <td class="dependency-package">{{dependency.name}}</td>
-            <td class="dependency-package">{{dependency && dependency.latest_version}}</td>
-            <td>
-                <i title="" class="small-column" [ngClass]="{'fa': true, 'insecure fa-ban': dependency && dependency.security && dependency.security.length > 0, 'secure fa-check-circle-o': dependency && dependency.security && dependency.security.length === 0}" aria-hidden="true"></i>
-            </td>
-            <td class="dependency-package">
-                <span style="display: block;" *ngFor="let u of dependency.github.used_by.slice(0, 2)">{{u.name}}</span>
-            </td>
-            <td class="dependency-package">{{dependency && dependency.licenses && dependency.licenses.length > 0 && dependency.licenses.join(', ')}}</td>
-            <td [innerHTML]="getTags(dependency)"></td>
-        </tr>
+      <tr *ngFor="let dependency of newDepen">
+        <td class="small-column" [style.background-color]="isCompatible(dependency)"><input  type="checkbox" value="" (change)="dependency.checked = !dependency.checked; dependencies.push(dependency); newDepen.splice(dependency, 1);" [checked]="dependency.checked" />
+          <i title=""  [ngClass]="{'fa': true, 'fa fa-exclamation-circle': conflictPackages.indexOf(dependency.name) >= 0 || neverUsedPackages.indexOf(dependency.name) >= 0}" aria-hidden="true"></i>
+        </td>
+        <td class="dependency-package" [style.background-color]="isCompatible(dependency)">{{dependency.name}}</td>
+        <td class="dependency-package" [style.background-color]="isCompatible(dependency)">{{dependency && dependency.latest_version}}</td>
+        <td class="small-column" [style.background-color]="isCompatible(dependency)">
+          <i title="" [ngClass]="{'fa': true, 'insecure fa-ban': dependency && dependency.security && dependency.security.length > 0, 'secure fa-check-circle-o': dependency && dependency.security && dependency.security.length === 0}" aria-hidden="true"></i>
+        </td>
+        <td class="dependency-package" [style.background-color]="isCompatible(dependency)">
+          <span style="display: block;" *ngFor="let u of dependency.github.used_by.slice(0, 2)">{{u.name}}</span>
+        </td>
+        <td class="dependency-package" [style.background-color]="isCompatible(dependency)">{{dependency && dependency.licenses && dependency.licenses.length > 0 && dependency.licenses.join(', ')}}</td>
+        <td [style.background-color]="isCompatible(dependency)" [innerHTML]="getTags(dependency)"></td>
+      </tr>
     </tbody>
-</table>
+  </table>
 </div>
 
 <button (click)="addTag = true" *ngIf="dependencies && dependencies.length > 0" class="add-more btn btn-primary">Add your known package</button>
 <button (click)="handleSubmit()" *ngIf="dependencies && dependencies.length > 0" class="submit add-more btn btn-primary">Submit to generate your stack</button> 
 <div *ngIf="addTag" class="add-more-section">
-    <input type="text" value="" [(ngModel)]="selected" [typeahead]="masterTagsList" />
-     <button class="btn btn-primary" (click)="handleAddTag()">Add</button>
+  <input type="text" value="" [(ngModel)]="selected" [typeahead]="masterTagsList" />
+  <button class="btn btn-primary" (click)="handleAddTag()">Add</button>
 </div>
