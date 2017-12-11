@@ -192,7 +192,7 @@ export class NaturalLanguageComponent implements OnInit, OnChanges {
         } else if(this.neverUsedPackages.indexOf(dependency["name"]) >= 0){
             return `#FFFFE0`;
         }
-        return '#fff';
+        return '';
     }
 
     public handleSuggestionClick(suggestion: any, element: Element): void {
