@@ -27,8 +27,10 @@
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let dependency of dependencies">
-        <td class="small-column" style="background-image: url('/assests/red_warning.png')"><input type="checkbox" value="" (change)="dependency.checked = !dependency.checked" [checked]="dependency.checked" /></td>
+      <tr *ngFor="let dependency of dependencies"  [style.background-color]="isCompatible(dependency)">
+        <td class="small-column"><input type="checkbox" value="" (change)="dependency.checked = !dependency.checked" [checked]="dependency.checked" />
+            <i title="" [tooltip]="dependency['message']" placement="right" [ngClass]="{'fa': true, 'fa fa-exclamation-circle': conflictPackages.indexOf(dependency.name) >= 0 || neverUsedPackages.indexOf(dependency.name) >= 0}" aria-hidden="true"></i>
+        </td>
         <td class="dependency-package">{{dependency.name}}</td>
         <td class="dependency-package">{{dependency && dependency.latest_version}}</td>
         <td class="small-column">
@@ -58,20 +60,21 @@
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let dependency of newDepen">
-        <td class="small-column" [style.background-color]="isCompatible(dependency)"><input  type="checkbox" value="" (change)="dependency.checked = !dependency.checked; dependencies.push(dependency); newDepen.splice(dependency, 1);" [checked]="dependency.checked" />
-          <i title=""  [ngClass]="{'fa': true, 'fa fa-exclamation-circle': conflictPackages.indexOf(dependency.name) >= 0 || neverUsedPackages.indexOf(dependency.name) >= 0}" aria-hidden="true"></i>
+      <tr *ngFor="let dependency of newDepen; let i = index;" [style.background-color]="isCompatible(dependency)">
+        <td class="small-column">
+            <input  type="checkbox" value="" (change)="dependency.checked = !dependency.checked; dependencies.push(dependency); newDepen.splice(i, 1);" [checked]="dependency.checked" />
+            <i title="" [tooltip]="dependency['message']" placement="right" [ngClass]="{'fa': true, 'fa fa-exclamation-circle': conflictPackages.indexOf(dependency.name) >= 0 || neverUsedPackages.indexOf(dependency.name) >= 0}" aria-hidden="true"></i>
         </td>
-        <td class="dependency-package" [style.background-color]="isCompatible(dependency)">{{dependency.name}}</td>
-        <td class="dependency-package" [style.background-color]="isCompatible(dependency)">{{dependency && dependency.latest_version}}</td>
-        <td class="small-column" [style.background-color]="isCompatible(dependency)">
+        <td class="dependency-package">{{dependency.name}}</td>
+        <td class="dependency-package">{{dependency && dependency.latest_version}}</td>
+        <td class="small-column">
           <i title="" [ngClass]="{'fa': true, 'insecure fa-ban': dependency && dependency.security && dependency.security.length > 0, 'secure fa-check-circle-o': dependency && dependency.security && dependency.security.length === 0}" aria-hidden="true"></i>
         </td>
-        <td class="dependency-package" [style.background-color]="isCompatible(dependency)">
+        <td class="dependency-package">
           <span style="display: block;" *ngFor="let u of dependency.github.used_by.slice(0, 2)">{{u.name}}</span>
         </td>
-        <td class="dependency-package" [style.background-color]="isCompatible(dependency)">{{dependency && dependency.licenses && dependency.licenses.length > 0 && dependency.licenses.join(', ')}}</td>
-        <td [style.background-color]="isCompatible(dependency)" [innerHTML]="getTags(dependency)"></td>
+        <td class="dependency-package">{{dependency && dependency.licenses && dependency.licenses.length > 0 && dependency.licenses.join(', ')}}</td>
+        <td [innerHTML]="getTags(dependency)"></td>
       </tr>
     </tbody>
   </table>

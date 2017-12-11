@@ -77,6 +77,16 @@ export class NaturalLanguageComponent implements OnInit, OnChanges {
                 if (data) {
                     if (data['dependencies'] && data['dependencies'].length > 0) {
                         data['dependencies'].map((d) => d['checked'] = false);
+                        data['dependencies'].map((d) => {
+                            if(this.conflictPackages.indexOf(d["name"]) >= 0){
+                                d['message'] = 'This package has dependency issue with above packages.';
+                            }else if(this.neverUsedPackages.indexOf(d["name"]) >= 0){
+                                d['message'] = 'This package does not usually use with above packages.';
+                            }else{
+                                d['message'] = null;
+                            }
+                        });
+                        
                         this.addPackages.push(...data['dependencies']);
                     }
                 }
@@ -175,12 +185,14 @@ export class NaturalLanguageComponent implements OnInit, OnChanges {
     }
 
     public isCompatible(dependency: string): string{
+        // dependency['message'] = '';
         if(this.conflictPackages.indexOf(dependency["name"]) >= 0){
+            // dependency['message'] = 'Some tooltip message';
             return `#FAEBD7`;
         } else if(this.neverUsedPackages.indexOf(dependency["name"]) >= 0){
             return `#FFFFE0`;
         }
-        return '';
+        return '#fff';
     }
 
     public handleSuggestionClick(suggestion: any, element: Element): void {
